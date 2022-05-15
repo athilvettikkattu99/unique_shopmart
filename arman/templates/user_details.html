@@ -1,0 +1,104 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <title>Admin Details</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
+    <!-- or -->
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
+</head>
+
+<body>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <nav class="nav">
+        <a href="{% url 'user_home' %}" class="nav__link ">
+            <i class="material-icons nav__icon">home</i>
+            <span class="nav__text">Home</span>
+        </a>
+        <a href="{% url 'edit_profile' %}" class="nav__link ">
+            <i class="material-icons nav__icon">manage_accounts</i>
+            <span class="nav__text">Edit Profile</span>
+        </a>
+        <a href="{% url 'reset_password' %}" class="nav__link">
+            <i class="material-icons nav__icon">restart_alt</i>
+            <span class="nav__text">Reset Password</span>
+        </a>
+        <a href="{% url 'user_test_details' %}" class="nav__link nav__link--active">
+            <i class="material-icons nav__icon">person_pin</i>
+            <span class="nav__text">Profile</span>
+        </a>
+    </nav>
+
+    <div class="container pt-3">
+        <a href="{% url 'logout' %}" class="btn" style="float: right;background-color: #dd0a03;"><i
+                class='bx bx-power-off' style="color: #fff;"></i></a>
+    </div>
+
+    <section class="myprofile mt-5" id="myprofile">
+        <div class="container d-flex justify-content-center">
+            <div class="mx-auto d-block col-md-12 pt-5 ">
+                <div class="card user-card-full ">
+                    <div class="row m-l-0 m-r-0">
+                        <div class="col-sm-4  user-profile d-flex justify-content-center">
+                            <div class="card-block text-center text-white d-flex justify-content-center" id="profilecard">
+                                <div class="img-box  d-flex justify-content-center">
+                                    {% if details.Image == "/static/images/fav_rm.png" %}
+                                    <img src="/static/images/fav_rm.png" alt="/static/images/fav_rm.png"
+                                        class="img-fluid">
+                                    {% else %}
+                                    <img src="{{detail.Image.url}}" alt="{{user_data.image.url}}" class="img-fluid">
+                                    {%endif%}
+                                </div>
+                                <h6 class="user_name pt-2">
+                                    {{detailData.username}}
+                                </h6>
+                            </div>
+                        </div>
+                        <div class="col-sm-8 user-details border">
+                            <div class="card-block">
+                                <h6 class="profile_heading">My Profile</h6>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <p class="sub_heading">Email</p>
+                                        <h6 class="text-muted f-w-400">
+                                            {{detailData.email}}
+                                        </h6>
+                                    </div>
+                                    <div class="col-sm-6" id="sub">
+                                        <p class="sub_heading">Phone</p>
+                                        <h6 class="text-muted f-w-400">+91 {{detail.Mobile}}</h6>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <p class="sub_heading">Address</p>
+                                        <h6 class="text-muted f-w-400">
+                                            {{detail.Address}}
+                                        </h6>
+                                    </div>
+                                </div>
+                                <hr>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script>
+        if (performance.navigation.type == 2) {
+            location.reload(true);
+        }
+    </script>
+</body>
+
+</html>

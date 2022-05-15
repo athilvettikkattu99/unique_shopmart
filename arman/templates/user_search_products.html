@@ -1,0 +1,108 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href='https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css'>
+    <title>Search Products</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <nav class="nav">
+        <a href="{% url 'user_home' %}" class="nav__link nav__link--active">
+            <i class="material-icons nav__icon">home</i>
+            <span class="nav__text">Home</span>
+        </a>
+        <a href="{% url 'user_myorder' %}" class="nav__link ">
+            <i class="material-icons nav__icon">receipt_long</i>
+            <span class="nav__text">My Orders</span>
+        </a>
+        <a href="{% url 'cart_view' %}" class="nav__link">
+            <i class="material-icons nav__icon">shopping_cart</i>
+            <span class="nav__text">Cart</span>
+                <span class="cart_count" id="cart_count" >{{ cart_con }}</span>
+        </a>
+        <a href="{% url 'user_test_details' %}" class="nav__link">
+            <i class="material-icons nav__icon">person_pin</i>
+            <span class="nav__text">Profile</span>
+        </a>
+    </nav>
+    <section class="users pt-5" id="users">
+        <div class="container" id="user_table">
+            <input class="form-control" id="myInput" type="text" placeholder="Search..">
+            <br>
+            <table class="table">
+                {% if sel_prod is not None %}
+                <tbody id="myTable">
+                    {% for p_data in sel_prod %}
+                    <tr data-href="{% url 'user_view_product_details' p_data.id  %}"
+                        class="">
+                        <td>
+                            <div class="row border">
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-6 p-2">
+                                    <img src="{{ p_data.Image.url }}" alt="{{ p_data.Image }}" class="img-fluid"
+                                    style="width:100%;min-height: 150px; max-height: 300px;object-fit: cover;">
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-6 p-2">
+                                    <p>{{ p_data.Name }}</p>
+                                    <p>{{ p_data.Brand }}</p>
+                                    <p>₹{{ p_data.Total_rate }}&nbsp;/&nbsp;&nbsp;{{ p_data.Qty }}&nbsp;&nbsp;{{ p_data.per_unit}}</p>
+                                    <p>{{ p_data.category_name }}</p>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {%endfor%}
+                </tbody>
+                {% else %}
+                <p>Sorry ! No product found</p>
+                {% endif %}
+            </table>
+        </div>
+    </section>
+    <script>
+        $(document).ready(function () {
+            if (performance.navigation.type == 2) {
+                location.reload(true);
+            }
+            $("#myInput").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $("#myTable tr").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
+
+        $(document).ready(function () {
+            $('table tr').click(function () {
+                window.location = $(this).data('href');
+                return false;
+            });
+        });
+        $(function () {
+            setInterval(cart_count, 1000);
+        });
+        function cart_count() {
+            $.ajax({
+                url: "{% url 'find_cart_count' %}",
+                type: 'get',
+                dataType: 'json',
+                success: function (response) {
+                    $("#cart_count").text(response.cart_con);
+                }
+            });
+        }
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,356 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href='https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css'>
+    <title>Update product</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body>
+    <section class="product pb-4" id="product">
+        <div class="container-fluid" style="max-width:40rem;">
+            <div class="row">
+                <div class="col-lg-12 pt-4">
+                    <div class="mx-auto d-block col-lg-12 col-md-8 product-box px-lg-3">
+                        <div class="col-lg-12 sign-up-title pb-3">
+                            <div class="heading mt-4">
+                                <h2 class="text-large text-center">Update product</h2>
+                            </div>
+                        </div>
+                        <div class="col-lg-12 sign-up-form mb-3">
+                            <form action="" method="POST" enctype="multipart/form-data" id="product">
+                                {% csrf_token %}
+                                <div class="row">
+                                    <div class="col-lg-12 pt-2">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <div class="custom-file">
+                                                    <input type="file" class="custom-file-input" id="imgload"
+                                                        name="file" accept="image/*">
+                                                    <label class="custom-file-label" for="imgload">Choose file</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <div class="img-box  d-flex justify-content-center">
+                                                <img src="{{ ft_data.Image.url }}" alt="{{ ft_data.Image.url }}"
+                                                    class="img-fluid" id="img">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 pt-4">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control" name="name"
+                                                placeholder="Product Name" autocomplete="off" value="{{ ft_data.Name }}"
+                                                required>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 pt-2">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control" name="brand" placeholder="Brand"
+                                                autocomplete="off" value="{{ ft_data.Brand }}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 pt-2">
+                                        <div class="form-group">
+                                            <select class="form-control" name="category">
+                                                <option selected value="{{ selected_cat.id }}">{{ selected_cat.name }}
+                                                </option>
+                                                {% if cate is None %}
+                                                <option selected disabled>No Category Added</option>
+                                                {% else %}
+                                                {% for categorys in cate %}
+                                                {% if selected_cat.id != categorys.id %}
+                                                <option value="{{ categorys.id }}">{{ categorys.name }}</option>
+                                                {% endif %}
+                                                {% endfor %}
+                                                {% endif %}
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-12">
+                                        <div class="row">
+                                            <div class="col-lg-4 pt-4">
+                                                <input type="number" class="form-control" name="qty" id="qty" min="0"
+                                                    placeholder="Qty" autocomplete="off" value="{{ ft_data.Qty }}"
+                                                    required>
+                                            </div>
+                                            <div class="col-lg-8 pt-4">
+                                                <select class="form-control" name="units" required>
+                                                    <option selected>{{ ft_data.per_unit }}</option>
+                                                    <option value="Kg">Kg</option>
+                                                    <option value="Gram">Gram</option>
+                                                    <option value="Litre">Litre</option>
+                                                    <option value="Milli litre">Milli Litre</option>
+                                                    <option value="Packet">Packet</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 pt-4">
+                                        <div class="form-group ">
+                                            <input type="number" class="form-control" name="rate" id="rate" min="0"
+                                                placeholder="Rate" autocomplete="off" value="{{ ft_data.Rate }}"
+                                                required>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 pt-2">
+                                        <div class="form-group ">
+                                            <input type="number" class="form-control" name="discount" id="disrate"
+                                                min="0" placeholder="Discount" value="{{ ft_data.Discount }}"
+                                                autocomplete="off">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 pt-2">
+                                        <div class="form-group ">
+                                            <input type="number" class="form-control" name="percentage" id="percentage"
+                                                min="0" placeholder="Percentage" value="{{ ft_data.Percentage }}"
+                                                autocomplete="off">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 pt-2">
+                                        <div class="form-group ">
+                                            <input type="number" class="form-control" name="total_rate" id="total_rate"
+                                                placeholder="Total Rate" value="{{ ft_data.Total_rate }}"
+                                                autocomplete="off" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 pt-2">
+                                        <div class="form-group d-flex">
+                                            <label for="">Top Product: </label>
+                                            <input type="checkbox" name="top_product" class="ml-2 mt-2"
+                                                value="{{ ft_data.Top_product }}" id="top_product">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 pt-2">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <div class="custom-file">
+                                                    <input type="file" class="custom-file-input" id="file-input"
+                                                        name="files" onchange="ValidateSingleInput(this);" multiple
+                                                        accept="image/*">
+                                                    <label class="custom-file-label" for="file-input">Choose
+                                                        file</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 col-md-12 col-12 pt-2 pb-2" id="preview">
+                                    </div>
+                                    <div class="col-lg-12 pt-2">
+                                        <div class="form-group d-flex justify-content-center pt-2 pb-2">
+                                            <input type="submit" name="signup" value="Update product"
+                                                class="btn btn-primary form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-12 pt-2 pb-2">
+                    <div class="row">
+                        {% if images_data is not None %}
+                        {% for imgs in images_data %}
+                        <div class="col-lg-3 col-md-4 col-12 pt-2 pb-2" id="img-div">
+                            <img src="{{ imgs.Image_path.url }}" alt="{{ imgs.Image_path.url }}"
+                                class="img-fluid mx-auto d-block" id="#img-div_img">
+                            <form action="" method="POST">
+                                <div class="form-group pt-2">
+                                    <input type="hidden" name="id" value="">
+                                    <button type="button" name="delete" class="delete btn-outline-danger
+                                              form-control" data-id="{{ imgs.id }}">Deleteit</button>
+                                </div>
+                            </form>
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {% if msg_success %}
+    <script>
+        Swal.fire({
+            position: 'center',
+            icon: 'success',
+            text: '{{ msg_success }}',
+            showConfirmButton: false,
+            timer: 1500
+        }).then(function () {
+            javascript: history.go(-2);
+        })
+    </script>
+    {% endif %}
+    {% if msg_error %}
+    <script>
+        Swal.fire({
+            icon: 'error',
+            text: '{{ msg_error }}',
+        }).then(function () {
+            javascript: history.go(-1);
+        })
+    </script>
+    {% endif %}
+    <script>
+        $(document).ready(function () {
+
+            $(document).on('click', '.delete', function (e) {
+                e.preventDefault();
+                var el = this;
+                var deleteid = $(this).data('id');
+                var confirmalert = confirm("Are you sure?");
+                if (confirmalert == true) {
+                    // AJAX Request
+                    $.ajax({
+                        type: "get",
+                        url: "{% url 'delete_product_img' %}",
+                        data: {
+                            id: deleteid
+                        },
+                        dataType: 'json',
+                        success: function (response) {
+                            alert(response.msg);
+                            $(el).closest("#img-div").remove();
+                        }
+                    });
+                } else {
+                    return false;
+                }
+            });
+
+
+
+
+
+
+
+            if ($('#top_product').val() === 'yes') {
+                $("#top_product").prop("checked", true);
+            }
+
+            $("#top_product").change(function () {
+                if ($(this).is(":checked")) {
+                    $(this).val("yes");
+                } else if ($(this).not(":checked")) {
+                    $(this).val("no");
+                }
+            });
+
+            $("#disrate, #rate, #qty").keyup(function () {
+                var rate = $("#rate").val();
+                var disrate = $("#disrate").val();
+
+
+                var per = ((disrate * 100) / rate);
+
+                var total_rate = rate - disrate;
+                $("#total_rate").val(total_rate.toFixed(0));
+                $("#percentage").val(per.toFixed(0));
+
+            });
+            $("#percentage, #rate, #qty").keyup(function () {
+
+                var rate = $("#rate").val();
+                var percentage = $("#percentage").val();
+
+                var discount = ((rate * percentage) / 100);
+
+                var total_rate = rate - discount;
+                $("#total_rate").val(total_rate.toFixed(0));
+                $("#disrate").val(discount.toFixed(0));
+
+            });
+
+            $("#imgload").on('change', function () {
+                var url_path = $(this).val();
+                var fileExtension = ['jpeg', 'jpg', 'png', 'bmp'];
+                if ($.inArray($(this).val().split('.').pop().toLowerCase(), fileExtension) == -1) {
+                    alert("Only formats are allowed : " + fileExtension.join(', '));
+                    $(this).val('');
+                }
+                else {
+                    $('#img').attr('src', window.URL.createObjectURL(this.files[0]))
+                }
+            });
+
+
+            function previewImages() {
+
+                var $preview = $('#preview').empty();
+                if (this.files) $.each(this.files, readAndPreview);
+
+                function readAndPreview(i, file) {
+
+                    if (!/\.(jpe?g|png|gif)$/i.test(file.name)) {
+                        return alert(file.name + " is not an image");
+                        $('#file-input').empty();
+                    } // else...
+
+                    var reader = new FileReader();
+
+                    $(reader).on("load", function () {
+                        $preview.append($("<img/>", {
+                            "style": "object-fit:cover;" +
+                                "width:50%;max-height:200px;",
+                            "class": "img-fluid",
+                            src: this.result,
+                        }));
+                    });
+                    reader.readAsDataURL(file);
+                }
+            }
+            $('#file-input').on("change", previewImages);
+
+
+        });
+
+        var _validFileExtensions = [".jpg", ".jpeg", ".bmp", ".gif", ".png"];
+        function ValidateSingleInput(oInput) {
+            if (oInput.type == "file") {
+                var sFileName = oInput.value;
+                if (sFileName.length > 0) {
+                    var blnValid = false;
+                    for (var j = 0; j < _validFileExtensions.length; j++) {
+                        var sCurExtension = _validFileExtensions[j];
+                        if (sFileName.substr(sFileName.length - sCurExtension.length, sCurExtension.length).toLowerCase()
+                            == sCurExtension.toLowerCase()) {
+                            blnValid = true;
+                            break;
+                        }
+                    }
+
+                    if (!blnValid) {
+                        alert("Sorry, " + sFileName + " is invalid, allowed extensions are: " + _validFileExtensions.join(", "));
+                        oInput.value = "";
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+    </script>
+
+</body>
+
+</html>

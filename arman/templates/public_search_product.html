@@ -1,0 +1,120 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href='https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css'>
+    <title>Public Search Products</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <nav class="nav">
+        <a href="{% url 'user_home' %}" class="nav__link nav__link--active">
+            <i class="material-icons nav__icon">home</i>
+            <span class="nav__text">Home</span>
+        </a>
+        <a href="{% url 'user_signup' %}" class="nav__link ">
+            <i class="material-icons nav__icon">person_add</i>
+            <span class="nav__text">Create an Account</span>
+        </a>
+        <a href="{% url 'login' %}" class="nav__link">
+            <i class="material-icons nav__icon">login</i>
+            <span class="nav__text">Sign in</span>
+        </a>
+    </nav>
+    <section class="users pt-5" id="users">
+        <div class="container" id="user_table">
+            <input class="form-control" id="myInput" type="text" placeholder="Search..">
+            <br>
+            <table class="table">
+                {% if sel_prod is not None %}
+                <tbody id="myTable">
+                    {% for p_data in sel_prod %}
+                    <tr>
+                        <td>
+                            <div class="row border">
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-6 p-2">
+                                    <img src="{{ p_data.Image.url }}" alt="{{ p_data.Image }}" class="img-fluid"
+                                    style="width:100%;min-height: 150px; max-height: 300px;object-fit: cover;">
+                                    <div class="wrapper d-none d-sm-none d-md-none d-lg-block pt-2 pb-2">
+                                        <div class="row">
+                                            <div class="col-lg-12 col-md-12 col-12">
+                                                <a href="{% url 'login' %}" name="cart" value="cart"
+                                                    class="cart form-control font-weight-normal"
+                                                    data-id="{{ product_det.id }}"> <i
+                                                        class="material-icons nav__icon">shopping_cart</i></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-6 p-2">
+                                    <p>{{ p_data.Name }}</p>
+                                    <p>{{ p_data.Brand }}</p>
+                                    <div class="rates d-flex pb-2">
+                                        <span class="rate">₹{{ p_data.Total_rate }} / {{ p_data.Qty }}
+                                            {{p_data.per_unit }}</span>&nbsp;&nbsp;&nbsp;&nbsp;
+                                        {% if p_data.Rate == p_data.Total_rate %}
+                                        <span class="total_rate"></span>&nbsp;&nbsp;&nbsp;&nbsp;
+                                        {%else%}
+                                        <span class="total_rate">₹{{ p_data.Rate }}</span>&nbsp;&nbsp;&nbsp;&nbsp;
+                                        {%endif%}
+                                        {% if p_data.Discount > 0 %}
+                                        <span class="percentage text-success">{{ p_data.Discount }} off</span>
+                                        {%endif%}
+                                    </div>
+                                    <p>{{ p_data.category_name }}</p>
+                                    <div class="wrapper d-sm-block d-md-block d-lg-none">
+                                        <div class="row">
+                                            <div class="col-lg-12 col-md-12 col-12">
+                                                <a href="{% url 'login' %}" name="cart" value="cart"
+                                                    class="cart form-control font-weight-normal"
+                                                    data-id="{{ product_det.id }}"> <i
+                                                        class="material-icons nav__icon">shopping_cart</i></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {%endfor%}
+                </tbody>
+                {% else %}
+                <p>Sorry ! No product found</p>
+                {% endif %}
+            </table>
+        </div>
+    </section>
+    <script>
+        $(document).ready(function () {
+            if (performance.navigation.type == 2) {
+                location.reload(true);
+            }
+            $("#myInput").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $("#myTable tr").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
+
+        // $(document).ready(function () {
+        //     $('table tr').click(function () {
+        //         window.location = $(this).data('href');
+        //         return false;
+        //     });
+        // });
+    </script>
+
+</body>
+
+</html>

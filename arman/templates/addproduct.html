@@ -1,0 +1,293 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Add Product</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body>
+    <section class="product pb-4" id="product">
+        <div class="container-fluid" style="max-width:40rem;">
+            <div class="row">
+                <div class="col-lg-12 pt-4">
+                    <div class="mx-auto d-block col-lg-12 col-md-8 product-box px-lg-3">
+                        <div class="col-lg-12 sign-up-title pb-3">
+                            <div class="heading mt-4">
+                                <h2 class="text-large text-center">Add Product</h2>
+                            </div>
+                        </div>
+                        <div class="col-lg-12 sign-up-form mb-3">
+                            <form action="" method="POST" enctype="multipart/form-data" id="product">
+                                {% csrf_token %}
+                                <div class="row">
+                                    <div class="col-lg-12 pt-2">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <div class="custom-file">
+                                                    <input type="file" class="custom-file-input" id="imgload" name="file" required
+                                                        accept="image/*" >
+                                                    <label class="custom-file-label" for="imgload">Choose file</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="img-box  d-flex justify-content-center" id="img">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 pt-4">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control" name="name"
+                                                placeholder="Product Name" autocomplete="off" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 pt-2">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control" name="brand" placeholder="Brand"
+                                                autocomplete="off" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 pt-2">
+                                        <div class="form-group">
+                                            <select class="form-control" name="category">
+                                                <option selected disabled>Select Category</option>
+                                                {% if cate is None %}
+                                                <option selected disabled>No Category Added</option>
+                                                {% else %}
+                                                {% for categorys in cate %}
+                                                <option value="{{ categorys.id }}">{{ categorys.name }}</option>
+                                                {% endfor %}
+                                                {% endif %}
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-12">
+                                        <div class="row">
+                                            <div class="col-lg-4 pt-4">
+                                                <input type="number" class="form-control" name="qty" id="qty" min="0"
+                                                    placeholder="Qty" autocomplete="off" required>
+                                            </div>
+                                            <div class="col-lg-8 pt-4">
+                                                <select class="form-control" name="units" required>
+                                                    <option selected disabled>Select Unit</option>
+                                                    <option value="Kg">Kilogram</option>
+                                                    <option value="Gram">Gram</option>
+                                                    <option value="Litre">Litre</option>
+                                                    <option value="Milli_litre">Milli Litre</option>
+                                                    <option value="Packet">Packet</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 pt-4">
+                                        <div class="form-group ">
+                                            <input type="number" class="form-control" name="rate" id="rate" min="0"
+                                                placeholder="Rate" autocomplete="off" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 pt-2">
+                                        <div class="form-group ">
+                                            <input type="number" class="form-control" name="discount" id="disrate"
+                                                min="0" placeholder="Discount" autocomplete="off">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 pt-2">
+                                        <div class="form-group ">
+                                            <input type="number" class="form-control" name="percentage" id="percentage"
+                                                min="0" placeholder="Percentage" autocomplete="off">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 pt-2">
+                                        <div class="form-group ">
+                                            <input type="number" class="form-control" name="total_rate" id="total_rate"
+                                                placeholder="Total Rate" autocomplete="off" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 pt-2">
+                                        <div class="form-group d-flex">
+                                            <label for="">Top Product: </label>
+                                            <input type="checkbox" name="top_product" class="ml-2 mt-2" value="yes">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 pt-2">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <div class="custom-file">
+                                                    <input type="file" class="custom-file-input" id="file-input" name="files" onchange="ValidateSingleInput(this);" multiple
+                                                        accept="image/*" >
+                                                    <label class="custom-file-label" for="file-input">Choose file</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 col-md-12 col-12 pt-2 pb-2" id="preview">
+                                    </div>
+                                    <div class="col-lg-12 pt-2">
+                                        <div class="form-group d-flex justify-content-center pt-2 pb-2">
+                                            <input type="submit" name="signup" value="Add product"
+                                                class="btn btn-primary form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {% if msg %}
+    <script>
+        Swal.fire({
+            position: 'center',
+            icon: 'success',
+            text: '{{ msg }}',
+            showConfirmButton: false,
+            timer: 1500
+        }).then(function () {
+            javascript: history.go(-2);
+        })
+    </script>
+    {% endif %}
+    {% if exist_msg %}
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: '{{ exist_msg }}',
+        }).then(function () {
+            javascript: history.go(-1);
+        })
+    </script>
+    {% endif %}
+
+    <script>
+        $(document).ready(function () {
+
+            $("#disrate, #rate, #qty").keyup(function () {
+                var rate = $("#rate").val();
+                var disrate = $("#disrate").val();
+
+
+                var per = ((disrate * 100) / rate);
+
+                var total_rate = rate - disrate;
+                $("#total_rate").val(total_rate.toFixed(0));
+                $("#percentage").val(per.toFixed(0));
+
+            });
+            $("#percentage, #rate, #qty").keyup(function () {
+
+                var rate = $("#rate").val();
+                var percentage = $("#percentage").val();
+
+                var discount = ((rate * percentage) / 100);
+
+                var total_rate = rate - discount;
+                $("#total_rate").val(total_rate.toFixed(0));
+                $("#disrate").val(discount.toFixed(0));
+
+            });
+
+            $("#imgload").on('change', function () {
+
+                var fileExtension = ['jpeg', 'jpg', 'png', 'bmp'];
+                if ($.inArray($(this).val().split('.').pop().toLowerCase(), fileExtension) == -1) {
+                    alert("Only formats are allowed : " + fileExtension.join(', '));
+                    $(this).val('');
+                }
+                else {
+                    if (typeof (FileReader) != "undefined") {
+
+                        var image_holder = $("#img");
+                        image_holder.empty();
+
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+                            $("<img />", {
+                                "src": e.target.result,
+                                "class": "img-fluid"
+                            }).appendTo(image_holder);
+
+                        }
+                        image_holder.show();
+                        reader.readAsDataURL($(this)[0].files[0]);
+                    } else {
+                        alert("This browser does not support FileReader.");
+                        $(this).val('');
+                    }
+                }
+            });
+
+
+            function previewImages() {
+
+                var $preview = $('#preview').empty();
+                if (this.files) $.each(this.files, readAndPreview);
+
+                function readAndPreview(i, file) {
+
+                    if (!/\.(jpe?g|png|gif)$/i.test(file.name)) {
+                        return alert(file.name + " is not an image");
+                        $('#file-input').empty();
+                    } // else...
+
+                    var reader = new FileReader();
+
+                    $(reader).on("load", function () {
+                        $preview.append($("<img/>", {
+                            "style": "object-fit:cover;" +
+                                "width:50%;max-height:200px;",
+                            "class": "img-fluid",
+                            src: this.result,
+                        }));
+                    });
+                    reader.readAsDataURL(file);
+                }
+            }
+            $('#file-input').on("change", previewImages);
+        });
+
+        var _validFileExtensions = [".jpg", ".jpeg", ".bmp", ".gif", ".png"];
+        function ValidateSingleInput(oInput) {
+            if (oInput.type == "file") {
+                var sFileName = oInput.value;
+                if (sFileName.length > 0) {
+                    var blnValid = false;
+                    for (var j = 0; j < _validFileExtensions.length; j++) {
+                        var sCurExtension = _validFileExtensions[j];
+                        if (sFileName.substr(sFileName.length - sCurExtension.length, sCurExtension.length).toLowerCase()
+                            == sCurExtension.toLowerCase()) {
+                            blnValid = true;
+                            break;
+                        }
+                    }
+
+                    if (!blnValid) {
+                        alert("Sorry, " + sFileName + " is invalid, allowed extensions are: " + _validFileExtensions.join(", "));
+                        oInput.value = "";
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+    </script>
+
+
+</body>
+
+</html>

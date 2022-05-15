@@ -1,0 +1,54 @@
+{% if user.is_superuser %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Details</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+
+<body>
+    <div class="container">
+
+        <h3>Edit Profile Details</h3>
+        <form method="post" action="" enctype="multipart/form-data">
+
+            {% csrf_token %}
+
+            {% for edit_data1 in editdata1 %}
+            Name : <input type="text" name="username" value="{{edit_data1.username}}"><br>
+            <br>
+            Email : <input type="email" name="email" value="{{edit_data1.email}}"><br>
+            <br>
+            {% endfor %}
+
+            {% for edit_data in editdata %}
+            Mobile : <input type="text" name="mobile" value="{{edit_data.Mobile}}"><br>
+            <br>
+            Address : <input type="text" name="address" value="{{edit_data.Address}}"><br>
+            <br>
+            Profile Picture : <input type="file" name="files" accept="image/*"><br>
+            <img src="{{edit_data.Image.url}}" alt="Image"><br>
+            {% endfor %}
+            <br>
+            <input type="submit" value="Update" class="btn btn-secondary btn-sm">
+
+        </form>
+    </div>
+
+</body>
+
+</html>
+{% else %}
+<p>
+    User not logged in
+    <br>
+    <a href="/">
+        <button class="btn btn-secondary btn-sm">Login</button><br>
+    </a>
+</p>
+{% endif %}

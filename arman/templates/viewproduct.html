@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href='https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css'>
+    <title>DisplayData</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+
+
+    <section class="users pt-5" id="users">
+        <div class="container" id="user_table">
+        <input class="form-control" id="myInput" type="text" placeholder="Search..">
+        <br>
+            <table class="table">
+            {% if p_data is not None %}
+                <tbody id="myTable">
+                    {% for p_data in p_data %}
+                    <tr class="border-top border-right border-bottom border-left">
+                        <td>
+                            <img src="{{ p_data.Image.url }}" alt="{{ p_data.Image }}" class="img-fluid"
+                                style="max-height: 150px;">
+                        </td>
+                        <td>
+                             <p>{{ p_data.Name }}</p><br>
+                             <p>{{ p_data.Brand }}</p><br>
+                             <p>₹{{ p_data.Total_rate }}&nbsp;/&nbsp;&nbsp;{{ p_data.Qty }}&nbsp;&nbsp;{{ p_data.per_unit }}</p><br>
+                             <p>{{ p_data.category_name }}</p><br>
+                        </td>
+                        <td>
+                            <a href="{% url 'upd_product' p_data.id %}"
+                                class="update btn-info form-control text-center mt-2" ><i class="fa fa-pencil" aria-hidden="true"></i></a>
+                        </td>
+                        <td>
+                            <button type="submit" name="del" class="delete btn-danger form-control mt-2"
+                                data-id="{{ p_data.id }}"><i class="fa fa-trash" aria-hidden="true"></i></button>
+                        </td>
+                    </tr>
+                    {%endfor%}
+                </tbody>
+             {% else %}
+                    <p>No data exist</p>
+                {% endif %}
+            </table>
+        </div>
+    </section>
+    {% if messages %}
+    {% for message in messages %}
+    {% if message.tags %} <script>
+        alert("{{ message }}")
+        /*javascript:history.go(-3);*/
+    </script> {% endif %}
+    {% endfor %}
+    {% endif %}
+    <script>
+        $(document).ready(function(){
+            window.addEventListener("pageshow", function (event) {
+                var perfEntries = performance.getEntriesByType("navigation");
+                if (perfEntries[0].type === "back_forward") {
+                    location.reload();
+                }
+            });
+          $("#myInput").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("#myTable tr").filter(function() {
+              $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+          });
+        });
+       $(document).ready(function () {
+            $(document).on('click', '.delete', function (e) {
+                e.preventDefault();
+                var el = this;
+                var deleteid = $(this).data('id');
+                var confirmalert = confirm("Are you sure?");
+                if (confirmalert == true) {
+                    // AJAX Request
+                    $.ajax({
+                        type: "get",
+                        url: "{% url 'delete_data' %}",
+                        data: {
+                            id: deleteid
+                        },
+                        dataType: 'json',
+                        success: function (response) {
+                            alert(response.msg);
+                            $(el).closest("tr").remove();
+                        }
+                    });
+                } else {
+                    return false;
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

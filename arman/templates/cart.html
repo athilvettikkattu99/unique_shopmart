@@ -1,0 +1,334 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css">
+    <title>Cart view</title>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <nav class="nav">
+        <a href="{% url 'user_home' %}" class="nav__link ">
+            <i class="material-icons nav__icon">home</i>
+            <span class="nav__text">Home</span>
+        </a>
+        <a href="{% url 'user_myorder' %}" class="nav__link ">
+            <i class="material-icons nav__icon">receipt_long</i>
+            <span class="nav__text">My Orders</span>
+        </a>
+        <a href="{% url 'cart_view' %}" class="nav__link nav__link--active">
+            <i class="material-icons nav__icon">shopping_cart</i>
+            <span class="nav__text">Cart</span>
+            <span class="cart_count">{{ cart_con }}</span>
+        </a>
+        <a href="{% url 'user_test_details' %}" class="nav__link">
+            <i class="material-icons nav__icon">person_pin</i>
+            <span class="nav__text">Profile</span>
+        </a>
+    </nav>
+    <section class="cart-products  pb-5" id="cart-products">
+        <div class="container pb-5">
+            <div class="row pt-4">
+                <div class="col-lg-8 col-md-7 mt-4 pb-3 finder">
+                    <div class="cart-column1">
+                        <div class="cart-heading pt-3">
+                            <h2>My Cart
+                                {%if count > 0 %}
+                                ({{ count }})
+                                {%endif%}
+                            </h2>
+                        </div>
+                        <hr>
+                        <div class="cart-items pt-3 pb-4" id="cart-col-1">
+                            {% if cart_data %}
+                            {% for cat in cart_data %}
+                            <div class="row pb-4" id="cart_div">
+                                <div class="col-lg-4 pt-2">
+                                    <div class="img-box p-2">
+                                        {% for imgs in pro_data %}
+                                        {% if imgs.id == cat.Product_id %}
+                                        <img src="{{ imgs.Image.url }}" class="img-fluid mx-auto d-block"
+                                            alt="product_image">
+                                        {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <div class="col-lg-8 pt-2">
+                                    <div class="content pl-3">
+                                        {% for imgs in pro_data %}
+                                        {% if imgs.id == cat.Product_id %}
+                                        <h4>{{ imgs.Name }}</h4>
+                                        {% endif %}
+                                        {% if imgs.id == cat.Product_id %}
+                                        <h6>{{ imgs.Brand }}</h6>
+                                        {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                    <div class="content d-flex pt-3 pl-3">
+                                        <p class="total_rate" id="tot{{ cat.id }}">₹{{ cat.Total_rate }}</p>
+                                        {% if cat.Total_rate != cat.Rate %}
+                                        <p class="discount_rate pl-3" id="rat{{ cat.id }}">₹{{ cat.Rate }}</p>
+                                        {% endif %}
+                                        {% if cat.Discount %}
+                                        <p class="percentage text-success pl-3" id="dis{{ cat.id }}">{{ cat.Discount }}
+                                            Off</p>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-lg-12 pt-2 pb-4 d-flex justify-content-between">
+                                        <div class="quantity d-flex pl-3">
+                                            <form action="" method="POST" class="hai d-flex">
+                                                <div class="input-group-btn pr-2">
+                                                    <button type="button" class="quantity-left-minus btn" id="qty_btn"
+                                                        data-type="minus" data-id="{{ cat.id }}">
+                                                        <i class="fa fa-minus" id="qty_icon"></i>
+                                                    </button>
+                                                </div>
+                                                <input type="number" id="quantity" name="quantitys"
+                                                    value="{{ cat.Qty_count }}" min="1" readonly
+                                                    class="qtys{{ cat.id }}">
+                                                <div class="input-group-btn pl-2">
+                                                    <button type="button" class="quantity-right-plus btn"
+                                                        data-type="plus" data-id="{{ cat.id }}" id="qty_increment">
+                                                        <i class="fa fa-plus"></i>
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <div class="icon">
+                                            <button type="button" class="delete form-control" data-id="{{ cat.id }}"><i
+                                                    class="fa fa-trash-o" aria-hidden="true"></i></button>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <hr>
+                            {% endfor %}
+
+                            {% else %}
+                            <p class="pl-4">No Cart items</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% if cart_data %}
+                <div class="col-lg-4 col-md-5 pt-4 " id="cart-col-2">
+                    <div class="cart-column2">
+                        <div class="cart-bill">
+                            <div class="card">
+                                <h3 class="pl-4 pt-4 pb-0 text-muted">Price Details</h3>
+                                <hr>
+                                <div class="card-body">
+                                    <dl class="dlist-align d-flex justify-content-between align-items-right">
+                                        <dt>Total Price({{ count }} items):</dt>
+                                        <dd class="text-right ml-3" id="rate">₹
+                                            {% if rate %}
+                                            {{ rate }}
+                                            {% else %}
+                                            0
+                                            {% endif %}
+                                        </dd>
+                                    </dl>
+                                    <dl class="dlist-align d-flex justify-content-between align-items-right">
+                                        <dt>Discount:</dt>
+                                        <dd class="text-right text-danger ml-3" id="discount">- ₹
+                                            {% if discount %}
+                                            {{ discount }}
+                                            {% else %}
+                                            0
+                                            {% endif %}
+                                        </dd>
+                                    </dl>
+                                    <dl class="dlist-align d-flex justify-content-between align-items-right">
+                                        <dt>Total Amount:</dt>
+                                        <dd class="text-right text-dark b ml-3"><strong id="total_rate">₹
+                                                {% if total_rate %}
+                                                {{ total_rate }}
+                                                {% else %}
+                                                0
+                                                {% endif %}
+                                            </strong>
+                                        </dd>
+                                    </dl>
+                                    {% if total_rate %}
+                                    <hr>
+                                    <button type="buton" class="btn" name="order" data-toggle="modal"
+                                        data-target="#placeorder" id="Order">PLACE ORDER
+                                    </button>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="placeorder" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Change order Address</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form method="post" action="">
+                        {% csrf_token %}
+                        <div class="modal-body">
+                            <input name="address" class="form-control" style="height: 150px;"
+                                value="{{ user_data.address }}" required autocomplete="off">
+                        </div>
+                        <div class="modal-footer d-flex justify-content-center">
+                            <button type="submit" class="btn btn-success">Order now</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+    {% if order_msg %}
+    <script>
+        Swal.fire({
+            position: 'center',
+            icon: 'success',
+            text: '{{ order_msg }}',
+            showConfirmButton: false,
+            timer: 1500
+        }).then(function () {
+            javascript: history.go(-1);
+        })
+
+    </script>
+    {% endif %}
+    <script>
+        $(document).ready(function () {
+            if (window.performance.navigation.type === 2) {
+                window.location.reload()
+            }
+
+            $('.delete').click(function () {
+                var el = this;
+                var deleteid = $(this).data('id');
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "{% url 'delete_cart' %}",
+                            type: 'get',
+                            data: {
+                                id: deleteid
+                            },
+                            dataType: 'json',
+                            success: function (response) {
+                                Swal.fire({
+                                    position: 'center',
+                                    icon: 'success',
+                                    text: response.msg,
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                }).then(function () {
+                                    location.reload();
+                                })
+                            }
+                        });
+                    }
+                })
+            });
+
+
+
+            $('.quantity-right-plus').on('click', function () {
+                var el = this;
+                var inc_id = $(this).data('id');
+                var qtys = ".qtys" + inc_id;
+                var tot = "#tot" + inc_id;
+                var rat = "#rat" + inc_id;
+                var dis = "#dis" + inc_id;
+
+                $.ajax({
+                    url: "{% url 'increment_cart' %}",
+                    type: 'get',
+                    data: {
+                        id: inc_id
+                    },
+                    dataType: 'json',
+                    success: function (response) {
+                        $(qtys).val(response.qty_count);
+                        $(tot).text("₹" + response.tot);
+                        $(rat).text("₹" + response.rat);
+                        $(dis).text(response.dis + " Off");
+                        $("#rate").text("₹ " + response.rate);
+                        $("#discount").text("- ₹ " + response.discount);
+                        $("#total_rate").text("₹ " + response.total_rate);
+                    }
+                });
+            });
+
+            $('.quantity-left-minus').on('click', function () {
+                var el = this;
+                var dec_id = $(this).data('id');
+                var qtys = ".qtys" + dec_id;
+                var tot = "#tot" + dec_id;
+                var rat = "#rat" + dec_id;
+                var dis = "#dis" + dec_id;
+
+                $.ajax({
+                    url: "{% url 'decrement_cart' %}",
+                    type: 'get',
+                    data: {
+                        id: dec_id
+                    },
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.qty_count == 0) {
+                            $.ajax({
+                                url: "{% url 'delete_cart' %}",
+                                type: 'get',
+                                data: {
+                                    id: dec_id
+                                },
+                                dataType: 'json',
+                                success: function (response) {
+                                    location.reload();
+                                }
+                            });
+                        }
+                        $(qtys).val(response.qty_count);
+                        $(tot).text("₹" + response.tot);
+                        $(rat).text("₹" + response.rat);
+                        $(dis).text(response.dis + " Off");
+                        $("#rate").text("₹ " + response.rate);
+                        $("#discount").text("- ₹ " + response.discount);
+                        $("#total_rate").text("₹ " + response.total_rate);
+                    }
+                });
+            });
+
+        });
+
+    </script>
+
+</body>
+
+</html>
